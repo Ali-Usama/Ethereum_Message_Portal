@@ -146,7 +146,7 @@ const App = () => {
         * If there is no currentAccount render this button
         */}
                 {!currentAccount && (
-                    <button className="waveButton" onClick={connectWallet}>
+                    <button className="waveButton" onClick={connectWallet} style={{backgroundColor: "Red"}}>
                         Connect Wallet
                     </button>
                 )}
