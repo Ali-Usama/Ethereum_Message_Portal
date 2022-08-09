@@ -40,7 +40,35 @@ const App = () => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
+    useEffect(() => {
+        let messagePortalContract;
+
+        const onNewMessage = (from, timestamp, message) => {
+            console.log("NewMessage: ", from, timestamp, message);
+            setAllMessages(prevState => [
+                ...prevState, {
+                    address: from,
+                    timestamp: new Date(timestamp * 1000),
+                    message: message,
+                },
+            ]);
+        };
+
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const signer = provider.getSigner();
+
+            messagePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+            messagePortalContract.on("NewMessage", onNewMessage);
+        }
+
+        return () => {
+            if (messagePortalContract) {
+                messagePortalContract.off("NewMessage", onNewMessage);
+            }
+        };
+    }, []);
 
     const checkIfWalletIsConnected = async () => {
         try {
